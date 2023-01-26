@@ -1,0 +1,15 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int solution(int n) {
+    int answer = 0;
+    
+    for(int i = 1; i <= n ; i++)
+    {
+        answer += i%2 == 0 ? i :0;
+    }
+    
+    return answer;
+}
