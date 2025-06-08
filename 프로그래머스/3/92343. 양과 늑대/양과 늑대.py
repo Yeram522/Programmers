@@ -1,37 +1,33 @@
 def solution(info, edges):
     answer = 0
+    visited = [0] * len(info) # 방문 체크
     
-    # 1. 이진 트리를 인접 그래프로 변경
+    # 인접 그래프로 변환
     graph = [[] for _ in range(len(info))]
-    visited = [False for _ in range(len(info))]
-    for edge in edges:
-        graph[edge[0]].append(edge[1])
+    for u, v in edges:
+        graph[u].append(v)  # 단방향으로만 추가
         
-    def DFS(curr, sheep, wolf, valid_vertexes):
-        nonlocal answer
-        # 종료 조건
-        if sheep <= wolf:
-            return
-        
-        # 양 업데이트
-        answer = max(sheep, answer)
-        valid_vertexes += graph[curr] 
-        for vertex in valid_vertexes:
-            new_vertexes = [item for item in valid_vertexes if item != vertex]
-            if visited[vertex]: 
-                DFS(vertex, sheep, wolf, new_vertexes)
-                continue
-                
-            if info[vertex] == 0:
-                DFS(vertex, sheep+1, wolf, new_vertexes)
-            elif info[vertex] == 1:
-                DFS(vertex, sheep, wolf+1, new_vertexes)
-                
-        return
+    def backtracking(current,sheep, wolf,next_possible):
+        # 현재 노드 처리
+        if info[current] == 0:
+            sheep += 1
+        else:
+            wolf += 1
     
-    DFS(0,1,0,[])
-            
+        # 늑대가 양보다 많으면 종료
+        if wolf >= sheep:
+            return
+
+        # 최대 양 업데이트
+        nonlocal answer
+        answer = max(answer, sheep)
         
+        next_nodes = next_possible + graph[current]
         
+        for next_node in next_nodes:
+            next_candidates = [n for n in next_nodes if n != next_node]
+            backtracking(next_node, sheep, wolf, next_candidates)
         
+    backtracking(0, 0, 0, [])
+    
     return answer
